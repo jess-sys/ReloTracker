@@ -1,0 +1,20 @@
+name = "supermover-api"
+main = "src/index.ts"
+compatibility_date = "2024-12-01"
+
+# Custom domain: api.supermover.neutheria.ch
+routes = [
+  { pattern = "api.supermover.neutheria.ch", custom_domain = true }
+]
+
+[vars]
+KINDE_DOMAIN = "https://auth.neutheria.ch"
+KINDE_AUDIENCE = "https://api.supermover.neutheria.ch"
+CORS_ORIGIN = "https://supermover.neutheria.ch"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "supermover"
+database_id = "ca409da6-29d2-4280-9c33-356177abb8bc"
+# To create: wrangler d1 create supermover
+# Then paste the database_id here

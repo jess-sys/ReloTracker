@@ -1,15 +1,18 @@
 {
-  "name": "relotracker",
+  "name": "supermover",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:prod": "./build.sh",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy": "wrangler pages deploy dist --project-name=supermover"
   },
   "dependencies": {
+    "@kinde-oss/kinde-auth-react": "^4.0.0",
     "lucide-react": "^1.7.0",
     "qrcode.react": "^4.2.0",
     "react": "^19.2.4",
