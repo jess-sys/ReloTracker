@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import { useKindeAuth } from '@kinde-oss/kinde-auth-react';
+import { LoginScreen, Topbar, Button } from '@neutheria/design-system';
 import {
   Plus,
-  Search,
   Printer,
   Trash2,
   Edit3,
@@ -12,8 +12,6 @@ import {
   X,
   AlertTriangle,
   CloudUpload,
-  LogOut,
-  ChevronDown,
 } from 'lucide-react';
 import { apiFetch } from './lib/api';
 import './App.css';
@@ -52,7 +50,6 @@ const App: React.FC = () => {
   const [items, setItems] = useState<string[]>(['']);
   const [isFragile, setIsFragile] = useState(false);
 
-  const [showUserMenu, setShowUserMenu] = useState(false);
   const [syncing, setSyncing] = useState(false);
   const [syncError, setSyncError] = useState<string | null>(null);
   const [syncStatus, setSyncStatus] = useState<string | null>(null);
@@ -214,112 +211,41 @@ const App: React.FC = () => {
   // Login
   if (!isAuthenticated) {
     return (
-      <div className="login-bg">
-        <div className="login-card">
-          <h1 className="login-title">
-            <span className="brand-muted">Neutheria </span>SuperMover
-          </h1>
-          <div className="login-divider" />
-          <p className="login-sub">
-            Pack, label, and track every box of your move.
-          </p>
-          <div className="login-actions">
-            <button className="login-btn-primary" onClick={() => login()}>
-              Sign In
-            </button>
-            <button className="login-btn-secondary" onClick={() => register()}>
-              Create Account
-            </button>
-          </div>
-          <div className="login-footer">
-            Secure authentication provided by Kinde. Your data is encrypted and
-            stored on Cloudflare&rsquo;s global network.
-          </div>
-        </div>
-      </div>
+      <LoginScreen
+        appName="SuperMover"
+        tagline="Pack, label, and track every box of your move."
+        onLogin={() => login()}
+        onRegister={() => register()}
+      />
     );
   }
 
-  const displayName = user?.given_name
-    ? `${user.given_name}${user.family_name ? ` ${user.family_name}` : ''}`
-    : user?.email || 'User';
-
-  const initial = (user?.given_name?.[0] || user?.email?.[0] || 'U').toUpperCase();
-
   return (
     <>
-      {/* Top Bar */}
-      <div className="topbar-wrap">
-        <div className="topbar">
-          <div className="brand">
-            <span className="brand-muted">Neutheria </span>SuperMover
-          </div>
-
-          <div className="topbar-actions">
-            <div className="topbar-search">
-              <Search size={16} className="search-icon" />
-              <input
-                type="text"
-                placeholder="Search items, boxes, or rooms…"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
-            </div>
-
-            <button className="pill-btn" onClick={() => handleOpenModal()} title="Add Box">
-              <Plus size={16} />
-              <span>Add Box</span>
-            </button>
-
-            <button
-              className="pill-btn sync"
-              onClick={handleSync}
-              disabled={syncing}
-              title="Save to cloud"
-            >
-              <CloudUpload size={16} />
-              <span>{syncing ? 'Saving…' : 'Save'}</span>
-            </button>
-
-            <button className="pill-btn ghost" onClick={handleExport} title="Export JSON">
+      <Topbar
+        appName="SuperMover"
+        searchPlaceholder="Search items, boxes, or rooms…"
+        onSearch={setSearch}
+        actions={
+          <>
+            <Button onClick={() => handleOpenModal()} variant="secondary">
+              <Plus size={16} /> Add Box
+            </Button>
+            <Button onClick={handleSync} disabled={syncing} variant="primary">
+              <CloudUpload size={16} /> {syncing ? 'Saving…' : 'Save'}
+            </Button>
+            <Button onClick={handleExport} variant="ghost" title="Export JSON">
               <Download size={16} />
-            </button>
-            <label className="pill-btn ghost" title="Import JSON" style={{ cursor: 'pointer' }}>
+            </Button>
+            <label className="ds-btn ds-btn-ghost" title="Import JSON" style={{ cursor: 'pointer' }}>
               <Upload size={16} />
               <input type="file" hidden onChange={handleImport} accept=".json" />
             </label>
-
-            <div className="user-wrap">
-              <button className="user-btn" onClick={() => setShowUserMenu(v => !v)}>
-                <div className="user-avatar">{initial}</div>
-                <span className="user-name">{displayName}</span>
-                <ChevronDown size={14} color="#9ca3af" />
-              </button>
-              {showUserMenu && (
-                <>
-                  <div className="menu-backdrop" onClick={() => setShowUserMenu(false)} />
-                  <div className="user-menu">
-                    <div className="user-menu-header">
-                      <div className="name">{displayName}</div>
-                      {user?.email && <div className="email">{user.email}</div>}
-                    </div>
-                    <button
-                      className="signout"
-                      onClick={() => {
-                        setShowUserMenu(false);
-                        logout();
-                      }}
-                    >
-                      <LogOut size={14} />
-                      Sign out
-                    </button>
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
+          </>
+        }
+        user={user ?? null}
+        onLogout={logout}
+      />
 
       <main className="container">
         <div className="page-title">
